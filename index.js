@@ -40,6 +40,11 @@ let deckArray = []
 let chips = 50
 chipsEl.textContent = "Remaining chips: $" + chips
 
+
+let tempReveal = function() {
+    reveal()
+}
+
 // Based on the suitValue, determine whether its Diamond (D), Club (C), Heart (H) or Spade (S)
 function findSuit(suitValue) {
     let suit = ""
@@ -72,7 +77,7 @@ function noAct() {
     messageEl.innerText = "Please start the game first."
 }
 
-function reveal() {
+function reveal(skipRender = false) {
     //endOfGame = true
     endOfGame = true
 
@@ -91,7 +96,10 @@ function reveal() {
     cardDealerEl.textContent = "Dealer's Cards: " + displayCardText(cardArrayDealer)
     sumDealerEl.textContent = "Sum: " + sumDealer
 
-    renderGame()
+    // This is for the edge case when 21 is scored but not blackjack
+    if (!(skipRender)) {
+        renderGame()
+    }
 }
 
 
@@ -194,17 +202,15 @@ function renderGame() {
         if (cardArray.length === 2) {
             message = "You score a blackjack!"
             hasBlackJack = true
+        } else {
+            let skipRender = true
+            reveal(skipRender)
         }
-        
-        
     } else {
         message = "You are out of the game!"
         isAlive = false
         endOfGame = true
     }
-
-
-
 
     if (endOfGame) {
 
@@ -221,9 +227,6 @@ function renderGame() {
             }
         } 
         
-        
-        
-
         if (reward > betInputElValue) {
             let earn = reward - betInputElValue
             message = "YOU WIN! REWARDS: $" + earn
@@ -246,7 +249,7 @@ function renderGame() {
         startBtn.textContent = "START GAME"
 
         //Disable the stopBtn
-        stopBtn.removeEventListener("click", reveal)
+        stopBtn.removeEventListener("click", tempReveal)
         stopBtn.addEventListener("click", noAct)
 
         //Allowing bet again
@@ -305,7 +308,7 @@ function reset() {
 
     // Enable Stop & Reveal
     stopBtn.removeEventListener("click", noAct)
-    stopBtn.addEventListener("click", reveal)
+    stopBtn.addEventListener("click", tempReveal)
 
     // Stop Allowing editing the bet
     betInputEl.setAttribute("disabled", "")
