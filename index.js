@@ -38,7 +38,7 @@ let betInputElValue = Number(betInputEl.value)
 
 let deckArray = []
 let chips = 50
-chipsEl.textContent = "Remaining chips: $" + chips
+chipsEl.textContent = "Owned chips: $" + chips
 
 
 let smallBtns= document.querySelectorAll(".small-btn")
@@ -174,7 +174,7 @@ function startGame() {
 
         //Update Chips
         chips -= betInputElValue
-        chipsEl.textContent = "Remaining chips: $" + chips
+        chipsEl.textContent = "Owned chips: $" + chips
 
         //Draw initial cards for player and dealer
         for (let i=0;i<2;i++){
@@ -258,7 +258,7 @@ function renderGame() {
 
         // Update Rewards
         chips += reward
-        chipsEl.textContent = "Remaining chips: $" + chips
+        chipsEl.textContent = "Owned chips: $" + chips
 
         // Reset Game State for another game start again
 
