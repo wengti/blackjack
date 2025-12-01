@@ -2,7 +2,6 @@
 
 let hasBlackJack = false
 let isAlive = true
-let isStop = false
 let endOfGame = false
 
 let message = ""
@@ -17,6 +16,7 @@ startBtn.addEventListener("click", startGame)
 
 let stopBtn = document.getElementById("stop-btn")
 stopBtn.addEventListener("click", noAct)
+let stopFlag = false
 
 
 let messageEl = document.getElementById("message-el")
@@ -46,22 +46,21 @@ smallBtns.forEach( (elem) => {
     elem.addEventListener("click", function() {changePts(this)})
 })
 
-
-function changePts(elem) {
-    let sign = elem.textContent[0]
-    let pts = Number(elem.textContent.slice(1))
-    if (sign === "+"){
-        betInputElValue += pts
-    } else {
-        betInputElValue -= pts
-    }
-    
-    betInputEl.value = betInputElValue
-}
+let resetBtn = document.getElementById("reset-btn")
+resetBtn.addEventListener("click", resetChips)
 
 
-let tempReveal = function() {
-    reveal()
+
+
+
+// -------------------------------------- 1. Utility ----------------------------------------
+
+// define Card Objects
+function Card(suit, rank, value, link) {
+    this.suit = suit // D, C, H, S
+    this.rank = rank // 1 - 13
+    this.value = value // 1 - 10
+    this.link = link // ./image/_.png
 }
 
 // Based on the suitValue, determine whether its Diamond (D), Club (C), Heart (H) or Spade (S)
@@ -84,16 +83,23 @@ function findSuit(suitValue) {
     return suit
 }
 
-
-function Card(suit, rank, value, link) {
-    this.suit = suit // D, C, H, S
-    this.rank = rank // 1 - 13
-    this.value = value // 1 - 10
-    this.link = link // ./image/_.png
+// function to run bet value by pressing buttons
+function changePts(elem) {
+    let sign = elem.textContent[0]
+    let pts = Number(elem.textContent.slice(1))
+    if (sign === "+"){
+        betInputElValue += pts
+    } else {
+        betInputElValue -= pts
+    }
+    
+    betInputEl.value = betInputElValue
 }
 
-function noAct() {
-    messageEl.innerText = "Please start the game first."
+
+// function to run to reveal dealer's hand
+let tempReveal = function() {
+    reveal()
 }
 
 function reveal(skipRender = false) {
@@ -121,6 +127,43 @@ function reveal(skipRender = false) {
     }
 }
 
+// function to run when try to reveal dealer's card without starting the game
+function noAct() {
+    messageEl.innerText = "Please start the game first."
+}
+
+
+// compute sum with the consideration that ace can be 1 or 11 (either to maximize the sum)
+function checkSum(cardArray) {
+    let sum = 0
+
+    function simpleSum() {
+        sum = 0
+        for (let card of cardArray){
+            sum += card.value
+        } 
+    }
+
+
+    // Do normal sum first
+    simpleSum()
+    
+    // Set ace value to 1 if it exceeds 21
+    if (sum>21) { 
+        for(let i=0; i<cardArray.length; i++) {
+
+            if (cardArray[i].rank === 1 && cardArray[i].value === 11) {
+                cardArray[i].value = 1
+                simpleSum()
+                if (sum<21) {
+                    break
+                }
+            }
+        }
+    }
+    
+    return sum
+}
 
 // Draw a new card
 function getRandomCard() {
@@ -163,6 +206,10 @@ function getRandomCard() {
     return cardDrawn
 }
 
+
+// 2. -------------------------------------- Main Game Flow ----------------------------------------
+
+// function to run when the start game button is pressed
 function startGame() {
     betInputElValue = Number(betInputEl.value)
     // Check if there is a valid bet
@@ -204,11 +251,9 @@ function startGame() {
         renderGame()
 
     }
-
-    
 }
 
-
+// Update game state and check result
 function renderGame() {
 
     let reward = 0
@@ -270,6 +315,7 @@ function renderGame() {
         //Disable the stopBtn
         stopBtn.removeEventListener("click", tempReveal)
         stopBtn.addEventListener("click", noAct)
+        stopFlag = false
 
         //Allowing bet again
         betInputEl.removeAttribute("disabled")
@@ -281,7 +327,7 @@ function renderGame() {
 
 }
 
-
+// function to run when drawing new card
 function newCard() {
     if (cardArray.length === 0) {
         startGame()
@@ -298,7 +344,7 @@ function newCard() {
 
 }
 
-
+// function to run when a round ends to prepare for next round
 function reset() {
     cardArray = []
     cardArrayDealer = []
@@ -311,7 +357,6 @@ function reset() {
 
     hasBlackJack = false
     isAlive = true
-    isStop = false
     endOfGame = false
 
     // Adjust Card Row's height
@@ -328,54 +373,82 @@ function reset() {
     // Enable Stop & Reveal
     stopBtn.removeEventListener("click", noAct)
     stopBtn.addEventListener("click", tempReveal)
+    stopFlag = true
 
     // Stop Allowing editing the bet
     betInputEl.setAttribute("disabled", "")
 }
 
-function checkSum(cardArray) {
 
-    let sum = 0
+// function to run when reset game button is pressed
+function resetChips() {
+    if (chips <= 0) {        
+        hardReset()
+    } else {
+        message = "You still have chips."
+        messageEl.textContent = message
+    }
+}
 
-    function simpleSum() {
-        sum = 0
-        for (let card of cardArray){
-            sum += card.value
-        } 
+// function to run when reset game button is pressed and chip is less than or equal to 0
+function hardReset() {
+    cardArray = []
+    cardArrayDealer = []
+    deckArray = []
+
+    // Re-create the deck to be drawn
+    for (i=1; i<53 ; i++) {
+        deckArray.push(i)
     }
 
+    hasBlackJack = false
+    isAlive = true
+    endOfGame = false
 
-    // Do normal sum first
-    simpleSum()
-    
-    // Set ace value to 1 if it exceeds 21
-    if (sum>21) { 
-        for(let i=0; i<cardArray.length; i++) {
+    // Clear Card Display
+    clearDisplay()
 
-            if (cardArray[i].rank === 1 && cardArray[i].value === 11) {
-                cardArray[i].value = 1
-                simpleSum()
-                if (sum<21) {
-                    break
-                }
-            }
-        }
+    // Adjust Card Row's height
+    cardContainer.forEach( (elem) => {elem.style.height = "0px"} )
+
+    // Reimplement START GAME button instead of NEW CARD
+    if (startBtn.textContent === "NEW CARD"){
+        startBtn.removeEventListener("click", newCard)
+        startBtn.addEventListener("click", startGame)
+        startBtn.textContent = "START GAME"
+    } 
+
+    // Disable Stop & Reveal
+    if (stopFlag) {
+        stopBtn.removeEventListener("click", tempReveal)
+        stopBtn.addEventListener("click", noAct)
+        stopFlag = false
     }
     
-    return sum
+
+    // Allowing bet editing again
+    if (betInputEl.hasAttribute("disabled")) {
+        betInputEl.removeAttribute("disabled")
+    }
+
+    // Update text
+    cardPlayerEl.textContent = "Player's Cards: " + displayCardText(cardArray)
+    cardDealerEl.textContent = "Dealer's Cards: " + displayCardText(cardArrayDealer)
+    sumPlayerEl.textContent = "Sum: " 
+    sumDealerEl.textContent = "Sum: " 
+    message = "Want to play a round?"
+    messageEl.textContent = message
+    betInputElValue = 0
+    betInputEl.value = 0
+    chips = 50
+    chipsEl.textContent = "Owned chips: $" + chips
+
 }
 
 
-function getSumDealerPublic() {
-    let res = cardArrayDealer[0].value
-    if (res === 1) {
-        res = 11
-    }
-    return res
-}
+// 3. -------------------------------------- Display-Relevant ----------------------------------------
 
-
-
+// function to update text
 function displayCardText(cardArray) {
 
     let displayText = ""
@@ -387,6 +460,8 @@ function displayCardText(cardArray) {
     return displayText
 }
 
+
+// function to show card
 function displayCard() {
     cardImgPlayerEl.forEach( function(elem, idx, arr) {
         if (cardArray[idx]) {
@@ -407,6 +482,8 @@ function displayCard() {
     }
 }
 
+
+// function to clear card
 function clearDisplay() {
     cardImgEl.forEach( function(elem, idx, arr) {
         elem.src = ""
