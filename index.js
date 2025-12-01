@@ -32,13 +32,13 @@ let cardImgEl = document.querySelectorAll(".card-img-el")
 let cardImgPlayerEl = document.querySelectorAll("#player .card-img-el")
 let cardImgDealerEl = document.querySelectorAll("#dealer .card-img-el")
 
-let chispEl = document.getElementById("chips-el")
+let chipsEl = document.getElementById("chips-el")
 let betInputEl = document.getElementById("bet-input-el")
 let betInputElValue = Number(betInputEl.value)
 
 let deckArray = []
 let chips = 50
-chispEl.textContent = "Remaining chips: $" + chips
+chipsEl.textContent = "Remaining chips: $" + chips
 
 // Based on the suitValue, determine whether its Diamond (D), Club (C), Heart (H) or Spade (S)
 function findSuit(suitValue) {
@@ -61,12 +61,11 @@ function findSuit(suitValue) {
 }
 
 
-function Card(suit, rank, value, link, isVisible=true) {
+function Card(suit, rank, value, link) {
     this.suit = suit // D, C, H, S
     this.rank = rank // 1 - 13
     this.value = value // 1 - 10
     this.link = link // ./image/_.png
-    this.isVisible = isVisible
 }
 
 function noAct() {
@@ -77,12 +76,12 @@ function reveal() {
     //endOfGame = true
     endOfGame = true
 
-    // Reveal the second card
-    cardArrayDealer.at(-1).isVisible = true
-
-    // Reevaluate the sum now with all the cards visible
+    // Draw 2nd Card
+    let cardDrawn = getRandomCard()
+    cardArrayDealer.push(cardDrawn)
     sumDealer = checkSum(cardArrayDealer)
 
+    // Decide whether to draw third card
     if (sumDealer < 17 && isAlive) {
         let cardDrawn = getRandomCard()
         cardArrayDealer.push(cardDrawn)
@@ -97,7 +96,7 @@ function reveal() {
 
 
 // Draw a new card
-function getRandomCard(isCardVisible = true) {
+function getRandomCard() {
 
     //Create a random index
     let randomCardIdx = Math.floor( (Math.random() * deckArray.length) )
@@ -132,7 +131,7 @@ function getRandomCard(isCardVisible = true) {
     // Find the Card Images
     let cardImageLink = "./images/" + cardSuit + cardRank +".png"
 
-    let cardDrawn = new Card(cardSuit, cardRank, cardValue, cardImageLink, isCardVisible)
+    let cardDrawn = new Card(cardSuit, cardRank, cardValue, cardImageLink)
 
     return cardDrawn
 }
@@ -148,23 +147,21 @@ function startGame() {
 
         //Update Chips
         chips -= betInputElValue
-        chispEl.textContent = "Remaining chips: $" + chips
+        chipsEl.textContent = "Remaining chips: $" + chips
 
         //Draw initial cards for player and dealer
         for (let i=0;i<2;i++){
-            let isCardVisible = true
 
             // Deal card to player
             cardDrawn = getRandomCard()
             cardArray.push(cardDrawn)
-            
-            // Second card of dealer should not be visible
-            if (i === 1){
-                isCardVisible = false
-            }
+
+            if (i===1) {
+                break
+            } // Only draw 2 player card and 1 dealer card
             
             // Deal card to dealer
-            cardDrawn = getRandomCard(isCardVisible)
+            cardDrawn = getRandomCard()
             cardArrayDealer.push(cardDrawn)
 
         }
@@ -239,7 +236,7 @@ function renderGame() {
 
         // Update Rewards
         chips += reward
-        chispEl.textContent = "Remaining chips: $" + chips
+        chipsEl.textContent = "Remaining chips: $" + chips
 
         // Reset Game State for another game start again
 
@@ -321,9 +318,7 @@ function checkSum(cardArray) {
     function simpleSum() {
         sum = 0
         for (let card of cardArray){
-            if (card.isVisible) {
-                sum += card.value
-            }
+            sum += card.value
         } 
     }
 
@@ -364,9 +359,7 @@ function displayCardText(cardArray) {
     let displayText = ""
 
     for (let card of cardArray) {
-        if (card.isVisible) {
-            displayText += card.suit + card.rank + " "
-        }   
+        displayText += card.suit + card.rank + " "
     }
 
     return displayText
@@ -381,14 +374,15 @@ function displayCard() {
 
     cardImgDealerEl.forEach ( function(elem, idx, arr) {
         if (cardArrayDealer[idx]) {
-            if (!(cardArrayDealer[idx].isVisible)) {
-                elem.src = "./images/back.png"
-            } else {
-                elem.src = cardArrayDealer[idx].link
-            }
-            
+            elem.src = cardArrayDealer[idx].link
         }
     })
+
+    // If there isnt a second card yet in cardArrayDealer
+    if (cardArrayDealer.length === 1) {
+        dealerCard2 = document.getElementById("card-2-dealer")
+        dealerCard2.src = "./images/back.png"
+    }
 }
 
 function clearDisplay() {
