@@ -147,7 +147,7 @@ function getRandomCard() {
 function startGame() {
     betInputElValue = Number(betInputEl.value)
     // Check if there is a valid bet
-    if (betInputElValue <= 0 || betInputElValue > chips) {
+    if (betInputElValue <= 0 || betInputElValue > chips || !(Number.isInteger(betInputElValue))) {
         message = "Invalid Bet!"
         messageEl.innerText = message
     } else {
@@ -216,7 +216,7 @@ function renderGame() {
 
         // Check rewards
         if (hasBlackJack) {
-            reward = 1.5 * betInputElValue
+            reward = Math.floor(1.5 * betInputElValue)
         } else if (isAlive) {
             if (sumDealer > 21) {
                 reward = 2 * betInputElValue
@@ -231,7 +231,7 @@ function renderGame() {
             let earn = reward - betInputElValue
             message = "YOU WIN! REWARDS: $" + earn
         } else if (reward === betInputElValue) {
-            message = "TIED! EARN THE INITIAL BET."
+            message = "EARN BACK THE INITIAL BET."
         }
         else {
             message = "YOU LOST! LOSS: $" + betInputElValue
