@@ -5,7 +5,7 @@ The initial state
 ![Initial state](./images/initial-game-state.png)
 
 The game in Progress
-![Game in progress](./images//game-in-progress.png)
+![Game in progress](./images/game-in-progress.png)
 
 The game's ending state
 ![Game's ending state](./images/game-end.png)
@@ -24,7 +24,7 @@ A simple self-implemented Blackjack game where the goal is to beat the dealer by
 
 
 ## Getting Started
-The implementation of this game can be accessed here: [Blackjack by wengti]().
+The implementation of this game can be accessed here: [Blackjack by wengti](https://blackjack-wengti.netlify.app/).
 
 The User Interface of this implementation is a mix of clickable buttons and input box.
 
