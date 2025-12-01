@@ -19,7 +19,7 @@ A simple self-implemented Blackjack game where the goal is to beat the dealer by
 * Only implement the single-player version (1 vs Dealer).
 * Ace will always be treated as 11 as long as it does not cause a bust. For multiple aces, only the first one will be set as 11.
 * The dealer is only dealt one card initially to prevent players from cheating by inspecting the JavaScript code to reveal the hidden second card.
-* The blackjack win condition is applied only to the player and not to the dealer. (saved for**Future Implementation**)
+* The blackjack win condition is applied only to the player and not to the dealer. (saved for **Future Implementation**)
 * If the blackjack win condition is triggered, the player is awarded 1.5x of his bet (round down).
 
 
