@@ -87,11 +87,15 @@ function findSuit(suitValue) {
 function changePts(elem) {
     let sign = elem.textContent[0]
     let pts = Number(elem.textContent.slice(1))
-    if (sign === "+"){
-        betInputElValue += pts
-    } else {
-        betInputElValue -= pts
+
+    if (!betInputEl.hasAttribute("disabled")){
+        if (sign === "+"){
+            betInputElValue += pts
+        } else {
+            betInputElValue -= pts
+        }
     }
+    
     
     betInputEl.value = betInputElValue
 }
