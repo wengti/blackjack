@@ -41,6 +41,25 @@ let chips = 50
 chipsEl.textContent = "Remaining chips: $" + chips
 
 
+let smallBtns= document.querySelectorAll(".small-btn")
+smallBtns.forEach( (elem) => {
+    elem.addEventListener("click", function() {changePts(this)})
+})
+
+
+function changePts(elem) {
+    let sign = elem.textContent[0]
+    let pts = Number(elem.textContent.slice(1))
+    if (sign === "+"){
+        betInputElValue += pts
+    } else {
+        betInputElValue -= pts
+    }
+    
+    betInputEl.value = betInputElValue
+}
+
+
 let tempReveal = function() {
     reveal()
 }
