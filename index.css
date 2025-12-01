@@ -33,27 +33,6 @@ p {
     margin: 10px 0px 30px 0px;
 }
 
-.btn {
-    color: #016f32;
-    font-style: inherit;
-    background: #d49819;
-    width: 300px;
-    height: 50px;
-    font-size: 30px;
-    font-weight: bold;
-    border: 2px solid #016f32;
-    border-radius: 5px;
-}
-
-.btn:hover {
-    border: 4px solid #016f32;
-}
-
-.btn:active {
-    opacity: 0.5;
-}
-
-
 .card-container {
     display: flex;
     justify-content: center;
@@ -62,3 +41,96 @@ p {
 .card-img-el {
     margin: 0px 0px;
 }
+
+.btn {
+    color: #016f32;
+    font-style: inherit;
+    background: #d49819;
+    width: 300px;
+    height: 70px;
+    font-size: 30px;
+    font-weight: bold;
+    border: 2px solid #016f32;
+    border-radius: 5px;
+    margin: 15px 0px;
+}
+
+.btn:hover, .small-btn:hover {
+    border: 4px solid #016f32;
+}
+
+.btn:active, .small-btn:active {
+    opacity: 0.5;
+}
+
+#interactive-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px auto 0px auto;
+    width: 900px;
+    /* background: linear-gradient(#9cc5a1 5%, #538d22, #143601); */
+    background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.1)), url("./images/red-table.jpg");
+
+    border-radius: 20px;
+    border: 2px solid #FE1111;
+}
+
+#player-info {
+    display: flex;
+    flex-direction: column;
+    width: 450px;
+    font-size: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+#bet-info {
+    text-shadow: 0px 0px 1px white;
+    font-weight: bolder;
+    font-family: Arial, Helvetica, sans-serif;
+    color:
+}
+
+#bet-input-el {
+    width: 60px;
+    height: 50px;
+    text-align: center;
+    font-size: 23px;
+    font-family: inherit;
+    font-weight: bolder;
+    border-radius: 5px;
+    border: 1px solid #016f32;
+    color: #016f32;
+    background-color: #d49819;
+}
+
+/* Make the arrow of input visible all time */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {  
+
+   opacity: 1;
+
+}
+
+.small-btn {
+    color: #016f32;
+    font-style: inherit;
+    background: #d49819;
+    width: 90px;
+    height: 50px;
+    font-size: 30px;
+    font-weight: bold;
+    border: 2px solid #016f32;
+    border-radius: 5px;
+    margin: 8px 0px;
+}
+
+#big-btn-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 350px;
+}
+
+
